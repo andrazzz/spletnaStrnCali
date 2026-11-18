@@ -79,8 +79,8 @@ Izbran **A** (avtor, 18. 11.), ker je najpreprostejši in ustreza željenim anim
 - En skupen modul pregledovalnika (`js/viewer.js`), ki ga uporabljajo vsi razdelki; modeli se nalagajo **leno** (ko razdelek pride v pogled), na telefonu največ en aktiven 3D pogled naenkrat.
 - **Animacije** v JavaScriptu, po imenih delov iz skript: skupine delov (npr. predal pribor = dno + stene + letvice) se definirajo v `js/deli-kuhinja.js` (preslikava ime dela → skupina → gibanje). Gibanja:
   - izvlek kuhinje/predala: translacija po y za dolžino vodila (~100 cm za Vevor 100 cm, uporabi vidno smiselno vrednost),
-  - predala kuhinje: odpiranje levo/desno (dokument: »odpirata se levo in desno«),
-  - drsna vrata: zdrs vzdolž utora,
+  - predala kuhinje se odpirata **samo proti notranjosti avta** (avtor, 18. 11.). Kuhinja stoji desno, zato je to stran L (−x v koordinatah skripte, proti sredini kombija in velikemu predalu). Klik »Predal pribor« najprej odmakne sprednja vrata na strani L, nato predal zdrsne bočno ven; »Predal krožniki« enako z zadnjimi vrati. Zapiranje v obratnem vrstnem redu. Če se izkaže, da je L napačna stran, se zamenja ena konstanta. *(smer: odločitev graditelja)*
+  - drsna vrata (gumb Vrata): zdrs vzdolž utora (sprednja nazaj čez zadnja), odpre/zapre oboje vrata na strani L,
   - polička: rotacija okoli osi klavirskega tečaja + palica v legi »v uporabi« (koordinate v `Kuhinja-stanje-projekta.md`).
   - Gladko (easing, ~0,8–1,2 s), gumb deluje kot preklop (odpri/zapri).
 - **Materiali:** 5 PBR materialov v `js/materiali.js`; teksture proceduralne (Canvas) ali majhne JPG/WebP (< 200 KB/kos):
@@ -89,7 +89,9 @@ Izbran **A** (avtor, 18. 11.), ker je najpreprostejši in ustreza željenim anim
   - lakiran sijaj: enobarven, visok sijaj (odsev okolja),
   - laminat s steklenimi vlakni: rahlo prosojen/belkast sijaj z drobno teksturo tkanja na lesu,
   - laminat s karbonom: črna/temno siva tkana tekstura (twill), sijaj.
-  - Izbirnik pult menja material samo mesha »Pult«, izbirnik vrata samo štirih drsnih vrat. Ostali topol deli: vezana topol. Brezovi kosi na vodilu: breza. Barvo laka (mat/sijaj) izbere graditelj (nevtralna, npr. antracit ali bela) – glej §8.
+  - **Privzeto (avtor, 18. 11.):** vsi topolovi deli (vključno s čelom in predaloma) v **topol lakiran mat**; pult **HPL**; brezovi kosi na vodilu breza. Lak je brezbarven (viden les topola); sijaj = isti les z visokim sijajem.
+  - Izbirnik **pult**: HPL (privzeto) + 5 materialov. Izbirnik **drsna vrata**: 5 materialov, privzeto topol lakiran mat. Izbirnik menja samo mesh »Pult 12« oz. štiri »Vrata …« meshe.
+  - HPL pulta: enobarven svetlo siv mat (odločitev graditelja).
 - **Kombi (uvod):** poenostavljen nizko-poligonski obris zadnjega dela T7 v Three.js (tla, stranice, streha, odprta dvižna prtljažna vrata, postelja na višini ~55 cm), brez logotipov in znamk; vanj postavljena kuhinja (desno) in veliki predal (levo) na pravih mestih.
 
 ### 6.4 Datoteke
@@ -124,6 +126,5 @@ tests/                (Playwright testi)
 - Kako natančno sestaviti skupine delov za animacije (iz imen v skriptah).
 - Besedila opisov (kratka, iz dokumentov v `cali-kuhinja/docs/`, brez CNC podrobnosti).
 
-## 8. Odprta vprašanja (za avtorja)
-- Kontaktni podatki (e-pošta, telefon?) za razdelek Kontakt.
-- Barva laka za »lakiran mat« in »lakiran sijaj«.
+## 8. Odprto
+- Kontaktni podatki: avtor jih ni podal; razdelek Kontakt ima zaenkrat nadomestno besedilo (»Kontakt bo dodan kmalu«) in eno spremenljivko v `index.html`, kamor se vpiše e-pošta. Osebnih podatkov ne objavljamo brez izrecne privolitve.
