@@ -1,0 +1,20 @@
+{
+  "_opomba": "Vrednosti v mm (shim jih pretvori v cm). Manjkajoce parametre skripta doda sama (userParameters.add).",
+  "kuhinja": {
+    "t12": 12, "t10": 10, "t6": 6, "zrak_reze": 0.2, "zrak_glob": 0.2, "utor_glob": 3,
+    "cep_dolz": 35, "zep_pult": 6, "rezkar_d": 4, "zob_predal": 18, "magnet_d": 8, "magnet_h": 3
+  },
+  "veliki-predal": {
+    "t12": 12, "t10": 10, "t6": 6, "zrak_reze": 0.2, "zrak_glob": 0.2, "utor_glob": 3,
+    "cep_dolz": 35, "zep_pult": 6, "rezkar_d": 4, "zob_predal": 18,
+    "predal_dolz": 1100, "predal_sir": 760, "stranica_vis": 80, "letev_vis": 80, "luknja_d": 12
+  },
+  "notranji-predal": {
+    "t12": 12, "t10": 10, "t6": 6, "zrak_reze": 0.2, "zrak_glob": 0.2, "utor_glob": 3,
+    "cep_dolz": 35, "zep_pult": 6, "rezkar_d": 4, "zob_predal": 17
+  },
+  "hladilnik": {
+    "t12": 12, "t10": 10, "t6": 6, "zrak_reze": 0.2, "zrak_glob": 0.2, "utor_glob": 3,
+    "cep_dolz": 35, "zep_pult": 6, "rezkar_d": 4, "zob_predal": 18
+  }
+}
