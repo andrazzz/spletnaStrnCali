@@ -19,6 +19,11 @@ test('uvodni prizor: kuhinja in predal se izvlecejo, Ponovi ju zažene znova', a
   assert.ok(Math.abs(konec.kuhinja - 0.6) < 0.01, 'kuhinja ' + konec.kuhinja);
   assert.ok(Math.abs(konec.predal - 0.9) < 0.01, 'predal ' + konec.predal);
   assert.equal(await stran.evaluate(() => window.__uvod.stanje().konec), true);
+  const ob = await stran.evaluate(() => ({ ...window.__uvod.obseg(), odprtina: window.__uvod.odprtina }));
+  const sr = (a) => (a[0] + a[1]) / 2;
+  assert.ok(sr(ob.predal) < 0 && 0 < sr(ob.kuhinja), JSON.stringify(ob));
+  for (const k of [ob.predal, ob.kuhinja]) assert.ok(k[0] >= ob.odprtina[0] + 2 && k[1] <= ob.odprtina[1] - 2, 'izven odprtine ' + JSON.stringify(ob));
+  assert.ok(ob.predal[1] <= ob.kuhinja[0], 'predal in kuhinja se prekrivata ' + JSON.stringify(ob));
   await stran.locator('#uvod .pogled-3d').screenshot({ path: path.join(__dirname, 'posnetki', 'uvod.png') });
   // Ponovi: vse nazaj in znova ven
   await stran.locator('#uvod button[data-akcija="ponovi"]').click();
