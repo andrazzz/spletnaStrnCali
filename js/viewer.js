@@ -25,7 +25,7 @@ function prazenPogled() {
   };
 }
 
-export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = false } = {}) {
+export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = false, sence = true, naZahtevo = false } = {}) {
   vsebnik.dataset.stanje = 'nalaganje';
   vsebnik.dataset.render = 'ne';
   let renderer;
@@ -38,7 +38,7 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
   try {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.enabled = sence;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const platno = renderer.domElement;
     platno.setAttribute('role', 'img');
@@ -88,7 +88,7 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
     const sonce = new THREE.DirectionalLight(0xffffff, 1.4);
     sonce.position.copy(sredina).add(new THREE.Vector3(polmer, polmer * 2.5, polmer * 1.2));
     sonce.target.position.copy(sredina);
-    sonce.castShadow = true;
+    sonce.castShadow = sence;
     sonce.shadow.mapSize.set(1024, 1024);
     Object.assign(sonce.shadow.camera, { left: -polmer * 1.5, right: polmer * 1.5, top: polmer * 1.5, bottom: -polmer * 1.5, near: 0.01, far: polmer * 8 });
     sonce.shadow.radius = 4;
@@ -110,11 +110,13 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
     kontrole.autoRotateSpeed = 1.2;
     kontrole.update();
 
+    let umazano = true;
     const prilagodi = () => {
       const w = Math.max(vsebnik.clientWidth, 1), h = Math.max(vsebnik.clientHeight, 1);
       renderer.setSize(w, h, false);
       kam.aspect = w / h;
       kam.updateProjectionMatrix();
+      umazano = true;
     };
     prilagodi();
     const ro = new ResizeObserver(() => { prilagodi(); if (!tece) narisi(); });
@@ -129,6 +131,8 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
         const e = easeInOutCubic(k);
         if (a.pozicija) obj.position.lerpVectors(a.od.pozicija, a.pozicija, e);
         if (a.kvat) obj.quaternion.slerpQuaternions(a.od.kvat, a.kvat, e);
+        umazano = true;
+        obj.updateMatrixWorld(true);   // svetovne matrike takoj usklajene, ne šele ob naslednjem izrisu
         if (k >= 1) { animacije.delete(obj); a.resolve(); }
       }
       animId = animacije.size ? requestAnimationFrame(animTik) : 0;
@@ -156,14 +160,21 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
 
     // --- Render zanka: teče samo, ko je vsebnik viden ---
     let tece = false, rafId = 0, unicen = false;
+    // naZahtevo: izris samo, ko se je kaj spremenilo (animacija, kamera, velikost); sicer le prazni tiki.
     function narisi() {
       kontrole.update();
       renderer.render(scena, kam);
+      umazano = false;
     }
-    const zanka = () => { if (!tece) return; narisi(); rafId = requestAnimationFrame(zanka); };
+    const zanka = () => {
+      if (!tece) return;
+      if (!naZahtevo) narisi();
+      else if (kontrole.update() || umazano) { renderer.render(scena, kam); umazano = false; }
+      rafId = requestAnimationFrame(zanka);
+    };
     function zagon() {
       if (tece || unicen) return;
-      tece = true; vsebnik.dataset.render = 'da';
+      tece = true; umazano = true; vsebnik.dataset.render = 'da';
       rafId = requestAnimationFrame(zanka);
     }
     function ustavi() {
@@ -209,18 +220,23 @@ function uskladiZanke() {
 }
 ozek.addEventListener?.('change', uskladiZanke);
 
-export function lenoNalaganje(vsebnik, ustvari) {
-  const v = { pogled: null, viden: false, razmerje: 0 };
+export function lenoNalaganje(vsebnik, ustvari, { odlog = 0 } = {}) {
+  const v = { pogled: null, viden: false, razmerje: 0, casovnik: 0 };
   vnosiPogledov.add(v);
   let nalaganje = false;
+  function zazeni() {
+    nalaganje = true;
+    Promise.resolve().then(ustvari).then((p) => { v.pogled = p || null; uskladiZanke(); })
+      .catch(() => prikaziNapako(vsebnik)).finally(() => { nalaganje = false; });
+  }
   const io = new IntersectionObserver((vnosi) => {
     for (const e of vnosi) {
       v.viden = e.isIntersecting;
       v.razmerje = e.intersectionRatio;
-      if (v.viden && !v.pogled && !nalaganje) {
-        nalaganje = true;
-        Promise.resolve().then(ustvari).then((p) => { v.pogled = p || null; uskladiZanke(); })
-          .catch(() => prikaziNapako(vsebnik)).finally(() => { nalaganje = false; });
+      if (!v.viden) { clearTimeout(v.casovnik); v.casovnik = 0; }
+      if (v.viden && !v.pogled && !nalaganje && !v.casovnik) {
+        // odlog: pogled se ustvari šele, ko ostane viden (hitro drsenje mimo ga ne naloži)
+        v.casovnik = setTimeout(() => { v.casovnik = 0; if (v.viden && !v.pogled && !nalaganje) zazeni(); }, odlog);
       }
     }
     uskladiZanke();

@@ -19,7 +19,7 @@ test('uvodni prizor: kuhinja in predal se izvlecejo, Ponovi ju zažene znova', a
   assert.ok(Math.abs(konec.kuhinja - 0.6) < 0.01, 'kuhinja ' + konec.kuhinja);
   assert.ok(Math.abs(konec.predal - 0.9) < 0.01, 'predal ' + konec.predal);
   assert.equal(await stran.evaluate(() => window.__uvod.stanje().konec), true);
-  await stran.locator('#uvod .pogled-3d').screenshot({ path: path.join(__dirname, '..', '..', 'posnetki', 'uvod.png') });
+  await stran.locator('#uvod .pogled-3d').screenshot({ path: path.join(__dirname, 'posnetki', 'uvod.png') });
   // Ponovi: vse nazaj in znova ven
   await stran.locator('#uvod button[data-akcija="ponovi"]').click();
   await stran.waitForTimeout(300);

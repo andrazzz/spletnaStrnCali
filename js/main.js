@@ -13,7 +13,7 @@ if (hero) {
     const uvod = await zazeniUvod(hero);
     window.__pogledi.set(hero, uvod.pogled);
     return uvod.pogled;
-  });
+  }, { odlog: 500 });
 }
 
 for (const vsebnik of document.querySelectorAll('.pogled-3d[data-model]')) {

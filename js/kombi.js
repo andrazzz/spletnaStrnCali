@@ -75,6 +75,7 @@ async function naloziSklop(url, izjeme) {
 
 export async function zazeniUvod(vsebnik) {
   const pogled = await ustvariPogled(vsebnik, {
+    naZahtevo: true,   // izris le ob premikih (animacija, vrtenje): prizor je velik in viden takoj ob nalaganju
     kamera: { pozicija: [1.9, 2.6, 3.4], cilj: [0, 0.75, -0.45] },
   });
   const razdelek = vsebnik.closest('section') || document;
