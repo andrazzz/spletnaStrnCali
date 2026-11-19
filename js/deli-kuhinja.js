@@ -1,5 +1,5 @@
 // Skupine delov kuhinje (predpone imen komponent iz kuhinja-deli.json) in preslikava koordinat.
-import * as THREE from 'three';
+import { izSkripte } from './skupno.js';
 
 // Predala se odpirata samo na strani L (-x v koordinatah skripte, proti sredini kombija).
 export const STRAN_ODPIRANJA = -1;
@@ -17,10 +17,7 @@ export const SKUPINE = {
   vrata: ['Vrata '],
 };
 
-// Skripta (cm; z gor, y=0 spredaj) -> GLB (m; y gor): (x, y, z)cm -> (x, z, -y)*0,01.
-export function izSkripte(x, y, z) {
-  return new THREE.Vector3(x * 0.01, z * 0.01, -y * 0.01);
-}
+export { izSkripte };
 
 // Najde mesh-e, katerih ime se začne z eno od predpon. Neznana predpona -> opozorilo.
 export function najdi(pogled, predpone) {

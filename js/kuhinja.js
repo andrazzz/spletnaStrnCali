@@ -2,27 +2,12 @@
 import * as THREE from 'three';
 import { ustvariPogled } from './viewer.js';
 import { MATERIALI, materialZaVidez, predogled } from './materiali.js';
+import { dodajUV } from './skupno.js';
 import { SKUPINE, STRAN_ODPIRANJA, izSkripte, najdi } from './deli-kuhinja.js';
 
 const MS = 900;
 const IZVLEK_CM = 60, VRATA_CM = 40.9, PREDAL_CM = 30;
 const NAZIV_AKCIJ = ['izvlek', 'pribor', 'krozniki', 'vrata', 'policka'];
-
-// Meshi iz CAD-a nimajo UV; naredimo škatlasto projekcijo (1 ponovitev teksture na 0,4 m).
-function dodajUV(mesh) {
-  const g = mesh.geometry;
-  if (g.attributes.uv || !g.attributes.position || !g.attributes.normal) return;
-  const p = g.attributes.position, n = g.attributes.normal, uv = new Float32Array(p.count * 2);
-  for (let i = 0; i < p.count; i++) {
-    const ax = Math.abs(n.getX(i)), ay = Math.abs(n.getY(i)), az = Math.abs(n.getZ(i));
-    let u, v;
-    if (ax >= ay && ax >= az) { u = p.getZ(i); v = p.getY(i); }
-    else if (ay >= az) { u = p.getX(i); v = p.getZ(i); }
-    else { u = p.getX(i); v = p.getY(i); }
-    uv[2 * i] = u / 0.4; uv[2 * i + 1] = v / 0.4;
-  }
-  g.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
-}
 
 function napolniIzbirnik(fs, idji, privzeto, naIzbiro) {
   const ime = fs.dataset.izbirnik;

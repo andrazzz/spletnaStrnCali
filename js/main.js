@@ -1,5 +1,7 @@
 import { ustvariPogled, lenoNalaganje } from './viewer.js';
 import { zazeniKuhinjo } from './kuhinja.js';
+import { zazeniPredal } from './predal.js';
+import { zazeniOstalo } from './ostalo.js';
 
 // Za teste in razhroščevanje: vsebnik -> pogled.
 window.__pogledi = new Map();
@@ -10,6 +12,16 @@ for (const vsebnik of document.querySelectorAll('.pogled-3d[data-model]')) {
       const kuhinja = await zazeniKuhinjo(vsebnik);
       window.__pogledi.set(vsebnik, kuhinja.pogled);
       return kuhinja.pogled;
+    }
+    if (vsebnik.closest('#predal')) {
+      const predal = await zazeniPredal(vsebnik);
+      window.__pogledi.set(vsebnik, predal.pogled);
+      return predal.pogled;
+    }
+    if (vsebnik.closest('#ostalo')) {
+      const { pogled } = await zazeniOstalo(vsebnik, vsebnik.dataset.model);
+      window.__pogledi.set(vsebnik, pogled);
+      return pogled;
     }
     const pogled = await ustvariPogled(vsebnik, {
       model: vsebnik.dataset.model,
