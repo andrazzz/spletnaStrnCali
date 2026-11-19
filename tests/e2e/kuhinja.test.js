@@ -197,3 +197,90 @@ test('posnetek zaslona: kuhinja odprta (namizje)', async () => {
   assert.deepEqual(napake, []);
   await context.close();
 });
+
+const platnoSlika = (stran) => stran.evaluate(() => document.querySelector('#kuhinja .pogled-3d canvas').toDataURL());
+const razlikaSlik = (stran, a, b) => stran.evaluate(async ([x, y]) => {
+  const nalozi = (u) => new Promise((res) => { const i = new Image(); i.onload = () => res(i); i.src = u; });
+  const [ia, ib] = await Promise.all([nalozi(x), nalozi(y)]);
+  const c = document.createElement('canvas'); c.width = ia.width; c.height = ia.height;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  g.drawImage(ia, 0, 0); const da = g.getImageData(0, 0, c.width, c.height).data;
+  g.clearRect(0, 0, c.width, c.height); g.drawImage(ib, 0, 0); const db = g.getImageData(0, 0, c.width, c.height).data;
+  let n = 0;
+  for (let i = 0; i < da.length; i += 4) if (Math.abs(da[i] - db[i]) + Math.abs(da[i + 1] - db[i + 1]) + Math.abs(da[i + 2] - db[i + 2]) > 30) n++;
+  return n;
+}, [a, b]);
+
+test('Drsna vrata so z privzete kamere vidna: slika platna se po odprtju vrat razlikuje', async () => {
+  const { context, stran, napake } = await odpriKuhinjo();
+  await stran.waitForTimeout(300);
+  const pred = await platnoSlika(stran);
+  await stran.evaluate(() => window.__kuhinja.preklopi('vrata'));
+  await stran.waitForTimeout(300);
+  const po = await platnoSlika(stran);
+  const n = await razlikaSlik(stran, pred, po);
+  assert.ok(n > 400, 'razlika slikovnih pik ' + n);
+  assert.deepEqual(napake, []);
+  await context.close();
+});
+
+test('Izvlek kuhinje: projiciran okvir kuhinje ostane v platnu (zaprta, izvlecena, vse odprto)', async () => {
+  for (const okno of [{ width: 1280, height: 800 }, { width: 360, height: 740 }]) {
+    const { context, stran, napake } = await odpriKuhinjo({ viewport: okno });
+    const vNPlatnu = () => stran.evaluate(() => {
+      const p = window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d'));
+      p.koren.updateMatrixWorld(true); p.kamera.updateMatrixWorld(true);
+      const b = new window.__kuhinja.Box3().setFromObject(p.koren);
+      let m = 0;
+      for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) {
+        const n = new b.min.constructor(x, y, z).project(p.kamera);
+        m = Math.max(m, Math.abs(n.x), Math.abs(n.y));
+      }
+      return m;
+    });
+    assert.ok(await vNPlatnu() < 1, okno.width + ' zaprta ' + await vNPlatnu());
+    await stran.evaluate(() => window.__kuhinja.preklopi('izvlek'));
+    const m1 = await vNPlatnu();
+    assert.ok(m1 < 1, okno.width + ' izvlecena ' + m1);
+    await stran.evaluate(async () => { await window.__kuhinja.preklopi('policka'); await window.__kuhinja.preklopi('pribor'); });
+    const m2 = await vNPlatnu();
+    assert.ok(m2 < 1, okno.width + ' izvlecena in odprta ' + m2);
+    // mirujoči vodili sta v sceni
+    assert.equal(await stran.evaluate(() => { const p = window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')); let n = 0; p.scena.traverse((o) => { if (o.userData.vodilo) n++; }); return n; }), 2);
+    assert.deepEqual(napake, []);
+    await context.close();
+  }
+});
+
+test('gumbi in izbirnika kuhinje ter predala so v HTML onemogočeni, po nalaganju omogočeni', async () => {
+  const html = await (await fetch(o.url + '/')).text();
+  assert.equal((html.match(/<button[^>]*data-akcija="(izvlek|pribor|krozniki|vrata|policka)"[^>]*disabled/g) || []).length, 6);
+  assert.equal((html.match(/<fieldset[^>]*disabled[^>]*data-izbirnik/g) || []).length, 2);
+  const { context, stran } = await odpriKuhinjo();
+  assert.equal(await stran.locator('#kuhinja button[disabled], #kuhinja fieldset[disabled]').count(), 0);
+  await context.close();
+});
+
+test('nalaganje: pred ustvarjenim pogledom je v HTML nadomestno besedilo, po ustvarjenju ga ni', async () => {
+  const html = await (await fetch(o.url + '/')).text();
+  assert.equal((html.match(/class="nadomestek-3d"/g) || []).length, 5);
+  const { context, stran } = await odpriKuhinjo();
+  assert.equal(await stran.locator('#kuhinja .nadomestek-3d').count(), 0);
+  await context.close();
+});
+
+for (const [ime, okno, opts] of [['namizje', { width: 1280, height: 800 }, {}], ['telefon', { width: 360, height: 740 }, { hasTouch: true, isMobile: true }]]) {
+  test('posnetki kuhinje (' + ime + '): zaprta, vrata odprta, izvlecena', async () => {
+    const { context, stran, napake } = await odpriKuhinjo({ viewport: okno, ...opts });
+    const mapa = path.join(__dirname, 'posnetki');
+    fs.mkdirSync(mapa, { recursive: true });
+    const snemaj = async (konec) => { await stran.waitForTimeout(300); await stran.locator('#kuhinja .pogled-3d').screenshot({ path: path.join(mapa, 'kuhinja-' + konec + '-' + ime + '.png') }); };
+    await snemaj('zaprta');
+    await stran.evaluate(() => window.__kuhinja.preklopi('vrata'));
+    await snemaj('vrata');
+    await stran.evaluate(async () => { await window.__kuhinja.preklopi('vrata'); await window.__kuhinja.preklopi('izvlek'); });
+    await snemaj('izvlecena');
+    assert.deepEqual(napake, []);
+    await context.close();
+  });
+}

@@ -1,9 +1,10 @@
 // Kuhinja: materiali, izbirnika materialov in animirani gumbi.
 import * as THREE from 'three';
 import { ustvariPogled } from './viewer.js';
+import { ustvariVodili } from './predal.js';
 import { MATERIALI, materialZaVidez, predogled } from './materiali.js';
 import { dodajUV } from './skupno.js';
-import { SKUPINE, STRAN_ODPIRANJA, izSkripte, najdi } from './deli-kuhinja.js';
+import { SKUPINE, STRAN_ODPIRANJA, VODILI_KUHINJE, izSkripte, najdi } from './deli-kuhinja.js';
 
 const MS = 900;
 const IZVLEK_CM = 60, VRATA_CM = 40.9, PREDAL_CM = 30;
@@ -28,7 +29,17 @@ function napolniIzbirnik(fs, idji, privzeto, naIzbiro) {
 }
 
 export async function zazeniKuhinjo(vsebnik) {
-  const pogled = await ustvariPogled(vsebnik, { model: vsebnik.dataset.model });
+  // Kamera z leve strani (-x), kjer se odpirajo predala in vrata; kader zajame zaprto in izvlečeno kuhinjo,
+  // odprta predala (0,3 m v -x), odprto polico (0,31 m pred celom) in mirujoči vodili (m, koordinate GLB).
+  const pogled = await ustvariPogled(vsebnik, {
+    model: vsebnik.dataset.model,
+    naZahtevo: true,   // izris le ob premikih
+    kamera: {
+      smer: [-1.2, 0.9, 1.0],
+      dodatniOkvir: { min: [-0.5, 0, -1.02], max: [0.21, 0.46, 0.92] },
+    },
+  });
+  if (!pogled.napaka) for (const mesh of ustvariVodili(VODILI_KUHINJE)) pogled.scena.add(mesh);
   const razdelek = vsebnik.closest('section') || document;
   const gumbi = [...razdelek.querySelectorAll('button[data-akcija]')];
   const izbirnika = { pult: razdelek.querySelector('fieldset[data-izbirnik="pult"]'), vrata: razdelek.querySelector('fieldset[data-izbirnik="vrata"]') };
@@ -39,6 +50,7 @@ export async function zazeniKuhinjo(vsebnik) {
   function nastavi(meshi, id) {
     const m = dobiMaterial(id);
     for (const mesh of meshi) { mesh.material = m; mesh.userData.material = id; }
+    pogled.osvezi();
   }
   for (const mesh of pogled.deli.values()) { dodajUV(mesh); nastavi([mesh], materialZaVidez(mesh.userData.videz)); }
 
@@ -79,6 +91,7 @@ export async function zazeniKuhinjo(vsebnik) {
   const pokaziPalici = (kaj) => {   // 'uporaba' | 'pospravljena' | 'nobena'
     for (const m of skupine.uporaba) m.visible = kaj === 'uporaba';
     for (const m of skupine.pospravljena) m.visible = kaj === 'pospravljena';
+    pogled.osvezi();
   };
   pokaziPalici('pospravljena');
 
@@ -151,9 +164,10 @@ export async function zazeniKuhinjo(vsebnik) {
 
   for (const g of gumbi) g.addEventListener('click', () => { preklopi(g.dataset.akcija); });
   osvezi();
-  if (pogled.napaka) {
-    for (const g of gumbi) g.disabled = true;
-    for (const fs of Object.values(izbirnika)) if (fs) fs.disabled = true;
+  // V HTML so gumbi in izbirnika onemogočeni; omogočimo jih šele, ko je model naložen.
+  if (!pogled.napaka) {
+    for (const g of gumbi) g.disabled = false;
+    for (const fs of Object.values(izbirnika)) if (fs) fs.disabled = false;
   }
 
   const api = { pogled, preklopi, izberi, stanje: () => ({ ...zelja }), Box3: THREE.Box3 };

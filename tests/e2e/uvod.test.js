@@ -36,3 +36,20 @@ test('uvodni prizor: kuhinja in predal se izvlecejo, Ponovi ju zažene znova', a
   assert.deepEqual(napake, []);
   await context.close();
 });
+
+test('kolesce miške nad uvodnim prizorom drsi po strani (ne zoomira)', async () => {
+  const { context, stran, napake } = await novaStran(o.brskalnik);
+  await stran.goto(o.url + '/');
+  await stran.waitForFunction(() => document.querySelector('#uvod .pogled-3d')?.dataset.stanje === 'pripravljeno' && window.__pogledi.get(document.querySelector('#uvod .pogled-3d')), null, { timeout: 45000 });
+  const razdalja = () => stran.evaluate(() => { const p = window.__pogledi.get(document.querySelector('#uvod .pogled-3d')); return p.kamera.position.distanceTo(p.kontrole.target); });
+  const r0 = await razdalja();
+  const y0 = await stran.evaluate(() => scrollY);
+  const okvir = await stran.locator('#uvod .pogled-3d').boundingBox();
+  await stran.mouse.move(okvir.x + okvir.width / 2, okvir.y + okvir.height / 2);
+  await stran.mouse.wheel(0, 400);
+  await stran.waitForTimeout(600);
+  assert.ok(await stran.evaluate(() => scrollY) > y0, 'stran se ni premaknila');
+  assert.ok(Math.abs((await razdalja()) - r0) < 1e-6, 'kamera se je zoomirala');
+  assert.deepEqual(napake, []);
+  await context.close();
+});

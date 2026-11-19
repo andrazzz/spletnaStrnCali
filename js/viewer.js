@@ -21,7 +21,7 @@ function prikaziNapako(vsebnik, sporocilo) {
 function prazenPogled() {
   return {
     scena: new THREE.Scene(), koren: new THREE.Group(), deli: new Map(), napaka: true,
-    animiraj: () => Promise.resolve(), nastaviMaterial() {}, zagon() {}, ustavi() {}, unici() {},
+    animiraj: () => Promise.resolve(), nastaviMaterial() {}, osvezi() {}, zagon() {}, ustavi() {}, unici() {},
   };
 }
 
@@ -68,36 +68,64 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
       });
     }
 
-    // Kamera: iz podane lege ali samodejno iz okvirja modela.
+    // Kamera: iz podane lege, iz smeri z samodejnim okvirjem (kamera.smer + dodatni okvir) ali samodejno iz okvirja modela.
     const okvir = new THREE.Box3().setFromObject(koren);
     const prazen = okvir.isEmpty();
     const sredina = prazen ? new THREE.Vector3(0, 0.3, 0) : okvir.getCenter(new THREE.Vector3());
     const velikost = prazen ? new THREE.Vector3(1, 1, 1) : okvir.getSize(new THREE.Vector3());
     const polmer = Math.max(velikost.length() / 2, 0.1);
     const kam = new THREE.PerspectiveCamera(35, 1, polmer / 50, polmer * 50);
-    if (kamera) {
+    // Prileganje: najmanjša razdalja vzdolž smeri, pri kateri so vsa oglišča okvirja v kadru (z rezervo).
+    let okvirKamere = null, smerKamere = null;
+    if (kamera?.smer) {
+      okvirKamere = okvir.clone();
+      if (kamera.dodatniOkvir) okvirKamere.union(new THREE.Box3(new THREE.Vector3().fromArray(kamera.dodatniOkvir.min), new THREE.Vector3().fromArray(kamera.dodatniOkvir.max)));
+      smerKamere = new THREE.Vector3().fromArray(kamera.smer).normalize();
+    }
+    function prileganje(aspekt) {
+      kam.aspect = aspekt; kam.updateProjectionMatrix();
+      const c = okvirKamere.getCenter(new THREE.Vector3());
+      const kotki = [];
+      for (const x of [okvirKamere.min.x, okvirKamere.max.x]) for (const y of [okvirKamere.min.y, okvirKamere.max.y]) for (const z of [okvirKamere.min.z, okvirKamere.max.z]) kotki.push(new THREE.Vector3(x, y, z));
+      const vidno = (d) => {
+        kam.position.copy(c).addScaledVector(smerKamere, d);
+        kam.lookAt(c); kam.updateMatrixWorld(true);
+        return kotki.every((k) => { const n = k.clone().project(kam); return Math.abs(n.x) <= 0.96 && Math.abs(n.y) <= 0.96; });
+      };
+      let lo = 0.05, hi = 50;
+      for (let i = 0; i < 40; i++) { const mid = (lo + hi) / 2; if (vidno(mid)) hi = mid; else lo = mid; }
+      vidno(hi);
+      return c;
+    }
+    let cilj;
+    if (okvirKamere) {
+      cilj = prileganje(Math.max(vsebnik.clientWidth, 1) / Math.max(vsebnik.clientHeight, 1));
+    } else if (kamera) {
       kam.position.fromArray(kamera.pozicija);
+      cilj = new THREE.Vector3().fromArray(kamera.cilj);
     } else {
       const razdalja = (polmer / Math.sin(THREE.MathUtils.degToRad(kam.fov / 2))) * 0.95;
       kam.position.copy(sredina).addScaledVector(new THREE.Vector3(1, 0.7, 1.25).normalize(), razdalja);
+      cilj = sredina;
     }
-    const cilj = kamera ? new THREE.Vector3().fromArray(kamera.cilj) : sredina;
     kam.lookAt(cilj);
 
     // Luči in mehka senca na tleh.
+    const sredinaS = okvirKamere ? okvirKamere.getCenter(new THREE.Vector3()) : sredina;
+    const polmerS = okvirKamere ? Math.max(polmer, okvirKamere.getSize(new THREE.Vector3()).length() / 2) : polmer;
     const sonce = new THREE.DirectionalLight(0xffffff, 1.4);
-    sonce.position.copy(sredina).add(new THREE.Vector3(polmer, polmer * 2.5, polmer * 1.2));
-    sonce.target.position.copy(sredina);
+    sonce.position.copy(sredinaS).add(new THREE.Vector3(polmerS, polmerS * 2.5, polmerS * 1.2));
+    sonce.target.position.copy(sredinaS);
     sonce.castShadow = sence;
     sonce.shadow.mapSize.set(1024, 1024);
-    Object.assign(sonce.shadow.camera, { left: -polmer * 1.5, right: polmer * 1.5, top: polmer * 1.5, bottom: -polmer * 1.5, near: 0.01, far: polmer * 8 });
+    Object.assign(sonce.shadow.camera, { left: -polmerS * 1.5, right: polmerS * 1.5, top: polmerS * 1.5, bottom: -polmerS * 1.5, near: 0.01, far: polmerS * 8 });
     sonce.shadow.radius = 4;
     sonce.shadow.bias = -0.0005;
     scena.add(sonce, sonce.target);
     if (!prazen) {
-      const tla = new THREE.Mesh(new THREE.PlaneGeometry(polmer * 12, polmer * 12), new THREE.ShadowMaterial({ opacity: 0.22 }));
+      const tla = new THREE.Mesh(new THREE.PlaneGeometry(polmerS * 12, polmerS * 12), new THREE.ShadowMaterial({ opacity: 0.22 }));
       tla.rotation.x = -Math.PI / 2;
-      tla.position.set(sredina.x, okvir.min.y - 0.002, sredina.z);
+      tla.position.set(sredinaS.x, okvir.min.y - 0.002, sredinaS.z);
       tla.receiveShadow = true;
       scena.add(tla);
     }
@@ -108,6 +136,10 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
     kontrole.dampingFactor = 0.08;
     kontrole.autoRotate = avtoVrtenje;
     kontrole.autoRotateSpeed = 1.2;
+    // Miškino kolesce naj drsi po strani (ne zoomira); ščipanje na dotik ostane.
+    if (window.matchMedia?.('(pointer: fine)').matches) kontrole.enableZoom = false;
+    let uporabnikPremaknil = false;
+    kontrole.addEventListener('start', () => { uporabnikPremaknil = true; });
     platno.style.touchAction = 'pan-y';   // navpično vlečenje drsi po strani, vodoravno vrti model
     kontrole.update();
 
@@ -115,6 +147,11 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
     const prilagodi = () => {
       const w = Math.max(vsebnik.clientWidth, 1), h = Math.max(vsebnik.clientHeight, 1);
       renderer.setSize(w, h, false);
+      if (okvirKamere && !uporabnikPremaknil) {
+        const c = prileganje(w / h);
+        kontrole.target.copy(c);
+        kontrole.update();
+      }
       kam.aspect = w / h;
       kam.updateProjectionMatrix();
       umazano = true;
@@ -151,6 +188,8 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
         if (!animId) animId = requestAnimationFrame(animTik);
       });
     }
+
+    function osvezi() { umazano = true; }
 
     function nastaviMaterial(imena, mat) {
       for (const ime of imena) {
@@ -195,7 +234,7 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
 
     narisi();
     vsebnik.dataset.stanje = 'pripravljeno';
-    return { scena, koren, deli, kamera: kam, kontrole, animiraj, nastaviMaterial, zagon, ustavi, unici };
+    return { scena, koren, deli, kamera: kam, kontrole, animiraj, nastaviMaterial, osvezi, zagon, ustavi, unici };
   } catch (e) {
     console.warn('3D pogled ni uspel:', e);
     try { renderer.dispose(); } catch (_) { /* nič */ }
@@ -222,22 +261,22 @@ function uskladiZanke() {
 ozek.addEventListener?.('change', uskladiZanke);
 
 export function lenoNalaganje(vsebnik, ustvari, { odlog = 0 } = {}) {
-  const v = { pogled: null, viden: false, razmerje: 0, casovnik: 0 };
+  const v = { pogled: null, viden: false, razmerje: 0, casovnik: 0, neuspel: false };
   vnosiPogledov.add(v);
   let nalaganje = false;
   function zazeni() {
     nalaganje = true;
     Promise.resolve().then(ustvari).then((p) => { v.pogled = p || null; uskladiZanke(); })
-      .catch(() => prikaziNapako(vsebnik)).finally(() => { nalaganje = false; });
+      .catch(() => { v.neuspel = true; prikaziNapako(vsebnik); }).finally(() => { nalaganje = false; });
   }
   const io = new IntersectionObserver((vnosi) => {
     for (const e of vnosi) {
       v.viden = e.isIntersecting;
       v.razmerje = e.intersectionRatio;
       if (!v.viden) { clearTimeout(v.casovnik); v.casovnik = 0; }
-      if (v.viden && !v.pogled && !nalaganje && !v.casovnik) {
+      if (v.viden && !v.pogled && !v.neuspel && !nalaganje && !v.casovnik) {
         // odlog: pogled se ustvari šele, ko ostane viden (hitro drsenje mimo ga ne naloži)
-        v.casovnik = setTimeout(() => { v.casovnik = 0; if (v.viden && !v.pogled && !nalaganje) zazeni(); }, odlog);
+        v.casovnik = setTimeout(() => { v.casovnik = 0; if (v.viden && !v.pogled && !v.neuspel && !nalaganje) zazeni(); }, odlog);
       }
     }
     uskladiZanke();

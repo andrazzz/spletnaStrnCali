@@ -52,7 +52,7 @@ a { color: inherit; }
 @media (min-width: 800px) { .pogled-3d { height: 440px; } }
 .pogled-3d canvas { display: block; width: 100%; height: 100%; }
 .pogled-majhen { height: 240px; }
-.napaka-3d { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 16px; text-align: center; color: var(--bledo); }
+.napaka-3d, .nadomestek-3d { position: absolute; inset: 0; display: grid; place-items: center; margin: 0; padding: 16px; text-align: center; color: var(--bledo); }
 
 .kartice { display: grid; gap: 24px; }
 @media (min-width: 700px) { .kartice { grid-template-columns: 1fr 1fr; } }
@@ -90,3 +90,9 @@ dialog.galerija img { display: block; max-width: 100%; max-height: calc(96vh - 9
 .galerija-podnapis { margin: 0; font-size: .9rem; color: var(--bledo); text-align: center; }
 .galerija-zapri { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.6rem; line-height: 1; cursor: pointer; }
 .galerija form { margin: 0; }
+
+/* Nalaganje 3D: nežen vrtavec in besedilo, dokler pogled ni pripravljen */
+.pogled-3d[data-stanje="nalaganje"]::before { content: ""; position: absolute; left: 50%; top: calc(50% - 22px); width: 28px; height: 28px; margin-left: -14px; border: 3px solid var(--rob); border-top-color: var(--naglas); border-radius: 50%; animation: vrtavec 0.9s linear infinite; }
+.pogled-3d[data-stanje="nalaganje"]::after { content: "Nalagam 3D …"; position: absolute; left: 0; right: 0; top: calc(50% + 14px); text-align: center; color: var(--bledo); font-size: .9rem; }
+@keyframes vrtavec { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .pogled-3d[data-stanje="nalaganje"]::before { animation-duration: 3s; } }

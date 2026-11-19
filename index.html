@@ -9,7 +9,7 @@
 <script type="importmap">
 {
   "imports": {
-    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.min.js",
     "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
   }
 }
@@ -38,7 +38,7 @@
       <p class="uvodno">Izvlečna kuhinja, veliki izvlečni predal in drobni dodatki, ki jih ogledate kar v 3D.</p>
     </div>
     <div class="ovoj">
-      <div id="hero-prizor" class="pogled-3d hero-prizor" data-opis="3D prizor zadnjega dela kombija z izvlečenima kuhinjo in predalom"></div>
+      <div id="hero-prizor" class="pogled-3d hero-prizor" data-opis="3D prizor zadnjega dela kombija z izvlečenima kuhinjo in predalom"><p class="nadomestek-3d">3D prizor se nalaga. Če se ne prikaže, omogočite JavaScript in preverite povezavo.</p></div>
       <div class="gumbi gumbi-uvod" role="group" aria-label="Uvodni prizor"><button type="button" data-akcija="ponovi" disabled>Ponovi</button></div>
     </div>
   </section>
@@ -52,21 +52,21 @@
         <dl class="mere">
           <div><dt>Mere</dt><dd>38,4 × 84 × 45 cm</dd></div>
           <div><dt>Teža</dt><dd>~9,7 kg</dd></div>
-          <div><dt>Delov</dt><dd>30</dd></div>
+          <div><dt>Delov</dt><dd>29</dd></div>
         </dl>
       </div>
       <div class="pogled-kuhinja">
-        <div class="pogled-3d" data-model="assets/models/kuhinja.glb" data-opis="3D model izvlečne kuhinje"></div>
+        <div class="pogled-3d" data-model="assets/models/kuhinja.glb" data-opis="3D model izvlečne kuhinje"><p class="nadomestek-3d">3D model se nalaga. Če se ne prikaže, omogočite JavaScript in preverite povezavo.</p></div>
         <div class="kontrolniki">
           <div class="gumbi" role="group" aria-label="Premiki kuhinje">
-            <button type="button" data-akcija="izvlek" aria-pressed="false">Izvlek kuhinje</button>
-            <button type="button" data-akcija="pribor" aria-pressed="false">Predal pribor</button>
-            <button type="button" data-akcija="krozniki" aria-pressed="false">Predal krožniki</button>
-            <button type="button" data-akcija="vrata" aria-pressed="false">Drsna vrata</button>
-            <button type="button" data-akcija="policka" aria-pressed="false">Polička s palico</button>
+            <button type="button" data-akcija="izvlek" aria-pressed="false" disabled>Izvlek kuhinje</button>
+            <button type="button" data-akcija="pribor" aria-pressed="false" disabled>Predal pribor</button>
+            <button type="button" data-akcija="krozniki" aria-pressed="false" disabled>Predal krožniki</button>
+            <button type="button" data-akcija="vrata" aria-pressed="false" disabled>Drsna vrata</button>
+            <button type="button" data-akcija="policka" aria-pressed="false" disabled>Polička s palico</button>
           </div>
-          <fieldset class="izbirnik" data-izbirnik="pult"><legend>Pult</legend></fieldset>
-          <fieldset class="izbirnik" data-izbirnik="vrata"><legend>Drsna vrata</legend></fieldset>
+          <fieldset class="izbirnik" disabled data-izbirnik="pult"><legend>Pult</legend></fieldset>
+          <fieldset class="izbirnik" disabled data-izbirnik="vrata"><legend>Drsna vrata</legend></fieldset>
         </div>
       </div>
     </div>
@@ -83,10 +83,10 @@
         </dl>
       </div>
       <div class="pogled-kuhinja">
-        <div class="pogled-3d" data-model="assets/models/veliki-predal.glb" data-opis="3D model velikega izvlečnega predala"></div>
+        <div class="pogled-3d" data-model="assets/models/veliki-predal.glb" data-opis="3D model velikega izvlečnega predala"><p class="nadomestek-3d">3D model se nalaga. Če se ne prikaže, omogočite JavaScript in preverite povezavo.</p></div>
         <div class="kontrolniki">
           <div class="gumbi" role="group" aria-label="Premik predala">
-            <button type="button" data-akcija="izvlek" aria-pressed="false">Izvleci predal</button>
+            <button type="button" data-akcija="izvlek" aria-pressed="false" disabled>Izvleci predal</button>
           </div>
         </div>
       </div>
@@ -98,15 +98,15 @@
       <h2>Ostali kosi</h2>
       <div class="kartice">
         <article class="kartica">
-          <div class="pogled-3d pogled-majhen" data-model="assets/models/hladilnik.glb" data-vrtenje="da" data-opis="3D model škatle za hladilnik"></div>
+          <div class="pogled-3d pogled-majhen" data-model="assets/models/hladilnik.glb" data-vrtenje="da" data-opis="3D model škatle za hladilnik"><p class="nadomestek-3d">3D model se nalaga. Če se ne prikaže, omogočite JavaScript in preverite povezavo.</p></div>
           <h3>Škatla za hladilnik</h3>
           <p>Škatla iz topolove vezane plošče za hladilnik v potniškem prostoru pod posteljo. Ima snemljiv pokrov ter izreze za zračenje, ročaja in kompresor. Znotraj meri 65 × 41,7 × 51,5 cm.</p>
           <p class="mere-vrstica">67 × 43,7 × 53,5 cm</p>
         </article>
         <article class="kartica">
-          <div class="pogled-3d pogled-majhen" data-model="assets/models/notranji-predal.glb" data-vrtenje="da" data-opis="3D model notranjega predala z mizico"></div>
+          <div class="pogled-3d pogled-majhen" data-model="assets/models/notranji-predal.glb" data-vrtenje="da" data-opis="3D model notranjega predala z mizico"><p class="nadomestek-3d">3D model se nalaga. Če se ne prikaže, omogočite JavaScript in preverite povezavo.</p></div>
           <h3>Notranji predal</h3>
-          <p>Stoji pod posteljo med sedežema druge vrste. Spodaj sprejme plastični predal 60 × 33 × 30 cm. Zgornja mizica se dvigne na tri višine.</p>
+          <p>Stoji pod posteljo med sedežema druge vrste. Spodaj sprejme plastični predal 60 × 33 × 30 cm. Zgornja mizica se nastavi na tri višine.</p>
           <p class="mere-vrstica">42 × 63 × 53,5 cm</p>
         </article>
       </div>
@@ -120,7 +120,7 @@
       <ul class="galerija-mreza">
         <li><a href="assets/img/cali-zadaj-les.webp" data-podnapis="Prtljažni prostor kombija, pogled skozi zadnja vrata: ogrodje postelje iz vezane plošče na talnih tirnicah."><img src="assets/img/cali-zadaj-les-slicica.webp" alt="Postelja iz vezane plošče, pogled skozi prtljažna vrata" width="600" height="450" loading="lazy"></a></li>
         <li><a href="assets/img/cali-zadaj-les-postelja.webp" data-podnapis="Ogrodje postelje: levo širši predelek za veliki predal, desno ožji za kuhinjo, vmes pokončna pregrada."><img src="assets/img/cali-zadaj-les-postelja-slicica.webp" alt="Postelja: levo predelek za veliki predal, desno za kuhinjo" width="600" height="450" loading="lazy"></a></li>
-        <li><a href="assets/img/cali-zadaj-les-postelja-od-spodaj.webp" data-podnapis="Pogled pod posteljo: v obeh predelkih so vidne tirnice za vodila."><img src="assets/img/cali-zadaj-les-postelja-od-spodaj-slicica.webp" alt="Pod posteljo: tirnice v obeh predelkih" width="600" height="450" loading="lazy"></a></li>
+        <li><a href="assets/img/cali-zadaj-les-postelja-od-spodaj.webp" data-podnapis="Pogled pod posteljo: v obeh predelkih so vidne talne tirnice."><img src="assets/img/cali-zadaj-les-postelja-od-spodaj-slicica.webp" alt="Pod posteljo: tirnice v obeh predelkih" width="600" height="450" loading="lazy"></a></li>
         <li><a href="assets/img/hladilnik-spredaj.webp" data-podnapis="Kompresorski hladilnik z dvema pokrovoma, črnim in belim zgornjim pasom."><img src="assets/img/hladilnik-spredaj-slicica.webp" alt="Hladilnik od spredaj" width="450" height="600" loading="lazy"></a></li>
         <li><a href="assets/img/hladilnik-stran.webp" data-podnapis="Hladilnik s strani: kompresor na krajšem koncu, vlita ročaja, nizke nogice."><img src="assets/img/hladilnik-stran-slicica.webp" alt="Hladilnik s strani" width="600" height="450" loading="lazy"></a></li>
       </ul>

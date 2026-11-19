@@ -30,3 +30,8 @@ export function najdi(pogled, predpone) {
   }
   return rezultat;
 }
+
+// Mirujoči vodili Vevor pod kuhinjo (REF |x| 17,5-19,4, y 0-101,6, z -0,5-7,1; cm skripte), obe strani.
+export const VODILI_KUHINJE = [
+  { x0: -19.4, x1: -17.5 }, { x0: 17.5, x1: 19.4 },
+].map((v) => ({ ...v, y0: 0, y1: 101.6, z0: -0.5, z1: 7.1 }));
