@@ -15,6 +15,7 @@
 }
 </script>
 <script type="module" src="js/main.js"></script>
+<script type="module" src="js/galerija.js"></script>
 </head>
 <body>
 <header class="glava">
@@ -115,14 +116,27 @@
   <section id="fotografije" class="sekcija siva">
     <div class="ovoj">
       <h2>Fotografije</h2>
-      <p class="nadomestek">Fotografije izdelanih kosov bodo dodane kmalu.</p>
+      <p class="uvodno">Prtljažni prostor in hladilnik, za katera je pohištvo narejeno. Klik na sličico jo poveča.</p>
+      <ul class="galerija-mreza">
+        <li><a href="assets/img/cali-zadaj-les.webp" data-podnapis="Prtljažni prostor kombija, pogled skozi zadnja vrata: ogrodje postelje iz vezane plošče na talnih tirnicah."><img src="assets/img/cali-zadaj-les-slicica.webp" alt="Postelja iz vezane plošče, pogled skozi prtljažna vrata" width="600" height="450" loading="lazy"></a></li>
+        <li><a href="assets/img/cali-zadaj-les-postelja.webp" data-podnapis="Ogrodje postelje: levo širši predelek za veliki predal, desno ožji za kuhinjo, vmes pokončna pregrada."><img src="assets/img/cali-zadaj-les-postelja-slicica.webp" alt="Postelja: levo predelek za veliki predal, desno za kuhinjo" width="600" height="450" loading="lazy"></a></li>
+        <li><a href="assets/img/cali-zadaj-les-postelja-od-spodaj.webp" data-podnapis="Pogled pod posteljo: v obeh predelkih so vidne tirnice za vodila."><img src="assets/img/cali-zadaj-les-postelja-od-spodaj-slicica.webp" alt="Pod posteljo: tirnice v obeh predelkih" width="600" height="450" loading="lazy"></a></li>
+        <li><a href="assets/img/hladilnik-spredaj.webp" data-podnapis="Kompresorski hladilnik z dvema pokrovoma, črnim in belim zgornjim pasom."><img src="assets/img/hladilnik-spredaj-slicica.webp" alt="Hladilnik od spredaj" width="450" height="600" loading="lazy"></a></li>
+        <li><a href="assets/img/hladilnik-stran.webp" data-podnapis="Hladilnik s strani: kompresor na krajšem koncu, vlita ročaja, nizke nogice."><img src="assets/img/hladilnik-stran-slicica.webp" alt="Hladilnik s strani" width="600" height="450" loading="lazy"></a></li>
+      </ul>
+      <dialog class="galerija" aria-label="Povečana fotografija">
+        <form method="dialog"><button class="galerija-zapri" aria-label="Zapri">×</button></form>
+        <img alt="">
+        <p class="galerija-podnapis"></p>
+      </dialog>
     </div>
   </section>
 
   <section id="kontakt" class="sekcija">
     <div class="ovoj">
       <h2>Kontakt</h2>
-      <p class="nadomestek">Kontaktni podatki bodo dodani kmalu.</p>
+      <!-- Kontakt: sem vpiši e-pošto, npr. <p><a href="mailto:ime@primer.si">ime@primer.si</a></p>, in odstrani spodnji nadomestni odstavek. -->
+      <p class="nadomestek">Kontakt bo dodan kmalu.</p>
     </div>
   </section>
 </main>

@@ -108,6 +108,7 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
     kontrole.dampingFactor = 0.08;
     kontrole.autoRotate = avtoVrtenje;
     kontrole.autoRotateSpeed = 1.2;
+    platno.style.touchAction = 'pan-y';   // navpično vlečenje drsi po strani, vodoravno vrti model
     kontrole.update();
 
     let umazano = true;

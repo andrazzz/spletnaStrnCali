@@ -76,3 +76,17 @@ a { color: inherit; }
 .material-moznost input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .material-moznost .krogec { width: 28px; height: 28px; flex: none; border-radius: 50%; border: 2px solid var(--rob); background-size: cover; }
 .material-moznost input:checked + .krogec { border-color: var(--naglas); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--naglas); }
+
+.galerija-mreza { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 700px) { .galerija-mreza { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.galerija-mreza a { display: block; border-radius: 12px; overflow: hidden; background: var(--pogled); aspect-ratio: 4 / 3; }
+.galerija-mreza a:focus-visible { outline: 2px solid var(--naglas); outline-offset: 2px; }
+.galerija-mreza img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .2s; }
+.galerija-mreza a:hover img { transform: scale(1.04); }
+dialog.galerija { padding: 12px; border: 0; border-radius: 12px; background: #fff; max-width: min(96vw, 1000px); max-height: 96vh; margin: auto; }
+dialog.galerija::backdrop { background: rgba(20, 15, 10, .75); }
+dialog.galerija[open] { display: flex; flex-direction: column; gap: 8px; }
+dialog.galerija img { display: block; max-width: 100%; max-height: calc(96vh - 90px); width: auto; height: auto; object-fit: contain; margin: 0 auto; border-radius: 6px; }
+.galerija-podnapis { margin: 0; font-size: .9rem; color: var(--bledo); text-align: center; }
+.galerija-zapri { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.9); font-size: 1.6rem; line-height: 1; cursor: pointer; }
+.galerija form { margin: 0; }
