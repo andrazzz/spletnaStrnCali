@@ -51,7 +51,20 @@
           <div><dt>Delov</dt><dd>30</dd></div>
         </dl>
       </div>
-      <div class="pogled-3d" data-model="assets/models/kuhinja.glb" data-opis="3D model izvlečne kuhinje"></div>
+      <div class="pogled-kuhinja">
+        <div class="pogled-3d" data-model="assets/models/kuhinja.glb" data-opis="3D model izvlečne kuhinje"></div>
+        <div class="kontrolniki">
+          <div class="gumbi" role="group" aria-label="Premiki kuhinje">
+            <button type="button" data-akcija="izvlek" aria-pressed="false">Izvlek kuhinje</button>
+            <button type="button" data-akcija="pribor" aria-pressed="false">Predal pribor</button>
+            <button type="button" data-akcija="krozniki" aria-pressed="false">Predal krožniki</button>
+            <button type="button" data-akcija="vrata" aria-pressed="false">Drsna vrata</button>
+            <button type="button" data-akcija="policka" aria-pressed="false">Polička s palico</button>
+          </div>
+          <fieldset class="izbirnik" data-izbirnik="pult"><legend>Pult</legend></fieldset>
+          <fieldset class="izbirnik" data-izbirnik="vrata"><legend>Drsna vrata</legend></fieldset>
+        </div>
+      </div>
     </div>
   </section>
 

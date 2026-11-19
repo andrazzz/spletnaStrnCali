@@ -59,3 +59,18 @@ a { color: inherit; }
 .mere-vrstica { font-weight: 600; color: var(--naglas); }
 .nadomestek { color: var(--bledo); border: 1px dashed var(--rob); border-radius: 12px; padding: 32px 16px; text-align: center; }
 .noga { padding: 24px 0; color: var(--bledo); font-size: .9rem; border-top: 1px solid var(--rob); }
+
+.pogled-kuhinja { min-width: 0; }
+.kontrolniki { margin-top: 16px; display: grid; gap: 14px; }
+.gumbi { display: flex; flex-wrap: wrap; gap: 8px; }
+.gumbi button { font: inherit; font-size: .92rem; padding: 8px 14px; min-height: 44px; border: 1px solid var(--rob); border-radius: 999px; background: #fff; color: var(--besedilo); cursor: pointer; }
+.gumbi button:hover { border-color: var(--naglas); }
+.gumbi button[aria-pressed="true"] { background: var(--naglas); border-color: var(--naglas); color: #fff; }
+.gumbi button:disabled { opacity: .5; cursor: not-allowed; }
+.gumbi button:focus-visible, .material-moznost:focus-within { outline: 2px solid var(--naglas); outline-offset: 2px; }
+.izbirnik { margin: 0; padding: 0; border: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; min-width: 0; }
+.izbirnik legend { padding: 0; margin-bottom: 6px; font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--bledo); }
+.material-moznost { display: inline-flex; align-items: center; gap: 8px; font-size: .88rem; cursor: pointer; min-height: 36px; }
+.material-moznost input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.material-moznost .krogec { width: 28px; height: 28px; flex: none; border-radius: 50%; border: 2px solid var(--rob); background-size: cover; }
+.material-moznost input:checked + .krogec { border-color: var(--naglas); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--naglas); }
