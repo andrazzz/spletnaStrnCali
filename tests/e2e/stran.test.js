@@ -118,3 +118,16 @@ test('animiraj premakne objekt, prekinitev prejšnje animacije ju razreši', asy
   assert.ok(Math.abs(r[0]) < 1e-6 && Math.abs(r[1] - 1) < 1e-6, JSON.stringify(r));
   await context.close();
 });
+
+test('na telefonu teče render zanka največ enega pogleda naenkrat', async () => {
+  const { context, stran } = await novaStran(o.brskalnik, { viewport: { width: 360, height: 740 }, isMobile: true });
+  await stran.goto(o.url + '/');
+  // #ostalo ima dve kartici; obe sta lahko hkrati blizu vidnega polja
+  await stran.locator('#ostalo').scrollIntoViewIfNeeded();
+  await stran.waitForFunction(() => document.querySelectorAll('#ostalo .pogled-3d[data-stanje="pripravljeno"]').length === 2, null, { timeout: STANJE_MS });
+  await stran.waitForTimeout(500);
+  const vsi = await stran.evaluate(() => [...document.querySelectorAll('.pogled-3d')].map((e) => e.dataset.render));
+  assert.ok(vsi.filter((x) => x === 'da').length <= 1, JSON.stringify(vsi));
+  assert.equal(vsi.filter((x) => x === 'da').length, 1, 'noben pogled ne teče: ' + JSON.stringify(vsi));
+  await context.close();
+});

@@ -193,21 +193,37 @@ export async function ustvariPogled(vsebnik, { model, kamera, avtoVrtenje = fals
 }
 
 // Ustvari pogled šele, ko je vsebnik blizu vidnega polja; zunaj zaslona ustavi render zanko.
+// Na telefonu (< 800 px) teče naenkrat samo najbolj viden pogled (spec 6.3).
+const vnosiPogledov = new Set();
+const ozek = window.matchMedia('(max-width: 799px)');
+
+function uskladiZanke() {
+  const viden = [...vnosiPogledov].filter((v) => v.pogled && v.viden);
+  const najboljsi = ozek.matches
+    ? viden.reduce((a, b) => (!a || b.razmerje > a.razmerje ? b : a), null)
+    : null;
+  for (const v of vnosiPogledov) {
+    if (!v.pogled) continue;
+    if (v.viden && (!ozek.matches || v === najboljsi)) v.pogled.zagon?.(); else v.pogled.ustavi?.();
+  }
+}
+ozek.addEventListener?.('change', uskladiZanke);
+
 export function lenoNalaganje(vsebnik, ustvari) {
-  let pogled = null, nalaganje = false, viden = false;
+  const v = { pogled: null, viden: false, razmerje: 0 };
+  vnosiPogledov.add(v);
+  let nalaganje = false;
   const io = new IntersectionObserver((vnosi) => {
-    for (const v of vnosi) {
-      viden = v.isIntersecting;
-      if (viden && !pogled && !nalaganje) {
+    for (const e of vnosi) {
+      v.viden = e.isIntersecting;
+      v.razmerje = e.intersectionRatio;
+      if (v.viden && !v.pogled && !nalaganje) {
         nalaganje = true;
-        Promise.resolve().then(ustvari).then((p) => {
-          pogled = p || null;
-          if (pogled && viden) pogled.zagon?.();
-        }).catch(() => prikaziNapako(vsebnik)).finally(() => { nalaganje = false; });
-      } else if (pogled) {
-        if (viden) pogled.zagon?.(); else pogled.ustavi?.();
+        Promise.resolve().then(ustvari).then((p) => { v.pogled = p || null; uskladiZanke(); })
+          .catch(() => prikaziNapako(vsebnik)).finally(() => { nalaganje = false; });
       }
     }
-  }, { rootMargin: '200px' });
+    uskladiZanke();
+  }, { rootMargin: '200px', threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] });
   io.observe(vsebnik);
 }
