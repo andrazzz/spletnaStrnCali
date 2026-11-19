@@ -81,8 +81,8 @@ export async function zazeniKuhinjo(vsebnik) {
   const odprtoPredal = izSkripte(STRAN_ODPIRANJA * PREDAL_CM, 0, 0);
   const odprtoSpredaj = izSkripte(0, VRATA_CM, 0), odprtoZadaj = izSkripte(0, -VRATA_CM, 0);
 
-  // Polička: tečaj (x-os) skozi y -1, z 45 (cm); mesh-e zavrtimo v vrtišču.
-  const tecaj = izSkripte(0, -1, 45);
+  // Polička: tečaj (x-os) skozi y -1, z 44 (cm), tik pred letvijo tečaja; mesh-e zavrtimo v vrtišču.
+  const tecaj = izSkripte(0, -1, 44);
   const vrtisce = new THREE.Group();
   const stars = skupine.policka[0]?.parent || pogled.koren;
   vrtisce.position.copy(tecaj);
@@ -100,6 +100,11 @@ export async function zazeniKuhinjo(vsebnik) {
   const zelja = { izvlek: false, vrata: false, pribor: false, krozniki: false, policka: false };
   const ukazano = new Map();        // objekt -> { kljuc, obljuba } zadnji ukazani cilj
   let zeton = 0;
+  // Začetna stanja: brez tega bi prvi klik čakal na brezpomembne animacije (in skril palico).
+  const mirno = (obj, kljuc) => ukazano.set(obj, { kljuc, obljuba: Promise.resolve() });
+  mirno(pogled.koren, 'izvlek:false'); mirno(vrtisce, 'policka:false');
+  for (const m of [...skupine.pribor, ...skupine.krozniki]) mirno(m, 'zaprt');
+  for (const m of [...skupine.vrataSpredaj, ...skupine.vrataZadaj]) mirno(m, 'vrata:false');
 
   function pojdi(obj, cilj, kljuc, ms = MS) {
     const prej = ukazano.get(obj);
@@ -144,17 +149,17 @@ export async function zazeniKuhinjo(vsebnik) {
   }
 
   function osvezi() {
-    for (const g of gumbi) g.setAttribute('aria-pressed', String(!!zelja[g.dataset.akcija]));
+    for (const g of gumbi) g.setAttribute('aria-pressed', String(g.dataset.akcija === 'vrata' ? !!(zelja.vrata || zelja.pribor) : !!zelja[g.dataset.akcija]));
   }
 
   function preklopi(akcija) {
     if (!NAZIV_AKCIJ.includes(akcija)) { console.warn('Kuhinja: neznana akcija "' + akcija + '"'); return Promise.resolve(); }
+    if (akcija === 'vrata' && (zelja.vrata || zelja.pribor)) { zelja.vrata = false; zelja.pribor = false; osvezi(); return uskladi(); }
     zelja[akcija] = !zelja[akcija];
     // sprednji in zadnji predal si zapirata pot (vrata drsijo v isti utor): odprt je lahko le eden
     if (zelja[akcija] && akcija === 'pribor') zelja.krozniki = false;
     if (zelja[akcija] && akcija === 'krozniki') { zelja.pribor = false; zelja.vrata = false; }
     if (zelja[akcija] && akcija === 'vrata') zelja.krozniki = false;
-    if (!zelja[akcija] && akcija === 'vrata') zelja.pribor = false;
     osvezi();
     return uskladi();
   }

@@ -71,9 +71,8 @@ test('izbirnika imata privzeto izbrana hpl / topol-mat in vidna imena', async ()
 test('preklopi(pribor): predal v -x za ~0,30 m, sprednja vrata L premaknjena', async () => {
   const { context, stran, napake } = await odpriKuhinjo();
   await stran.locator('button[data-akcija="pribor"]').click();
-  await stran.waitForTimeout(2000);
-  // SwiftShader riše počasi; dovolimo še zamudo zadnjega okvirja animacije
-  await stran.waitForFunction(() => Math.abs(window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')).deli.get('Predal pribor spredaj 7cm 6/Dno').position.x + 0.3) < 0.01, null, { timeout: 5000 });
+  // brez praznih animacij mora biti predal odprt v ~2,5 s (2 x 0,9 s + okvirji)
+  await stran.waitForFunction(() => Math.abs(window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')).deli.get('Predal pribor spredaj 7cm 6/Dno').position.x + 0.3) < 0.01, null, { timeout: 2500, polling: 50 });
   const r = await stran.evaluate(([p, v]) => {
     const d = window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')).deli;
     return { x: d.get(p).position.x, z: d.get(v).position.z, zadnja: d.get('Vrata L zadaj (notranji utor) 4+lam/Body1').position.z };
@@ -118,6 +117,18 @@ test('pribor nato krozniki: pribor se zapre, krozniki odprti, sodobna vrata na p
   await context.close();
 });
 
+test('prvi klik na Drsna vrata: pritisnjen gumb; klik ob odprtem priboru zapre pribor in vrata; palica ne utripa', async () => {
+  const { context, stran } = await odpriKuhinjo();
+  await stran.evaluate(() => { window.__kuhinja.preklopi('pribor'); });
+  assert.equal(await stran.locator('button[data-akcija="vrata"]').getAttribute('aria-pressed'), 'true');
+  await stran.locator('button[data-akcija="vrata"]').click();
+  assert.equal(await stran.locator('button[data-akcija="vrata"]').getAttribute('aria-pressed'), 'false');
+  const st = await stran.evaluate(() => window.__kuhinja.stanje());
+  assert.equal(st.pribor, false); assert.equal(st.vrata, false);
+  assert.equal(await stran.evaluate(() => window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')).deli.get('PRIKAZ palica pospravljena na celu/Body1').visible), true);
+  await context.close();
+});
+
 test('izvlek premakne celotno kuhinjo za 0,6 m proti prtljaznim vratom', async () => {
   const { context, stran } = await odpriKuhinjo();
   const z0 = await stran.evaluate(() => { const p = window.__pogledi.get(document.querySelector('#kuhinja .pogled-3d')); return p.koren.position.z; });
@@ -138,9 +149,10 @@ test('polička je privzeto zložena (visi pred čelom), palica pospravljena vidn
     return { q: m.getWorldQuaternion(new m.quaternion.constructor()).toArray(), minY: box.min.y, maxY: box.max.y, minZ: box.min.z, maxZ: box.max.z,
       uporaba: p.deli.get('Palica policke (snemljiva) 12/Body1').visible, pospravljena: p.deli.get('PRIKAZ palica pospravljena na celu/Body1').visible };
   }, POLICKA);
-  assert.ok(zacetek.maxZ <= 0.02 && zacetek.minZ >= -0.003, 'z ' + zacetek.minZ + '..' + zacetek.maxZ);   // pred celom (script y -1..0)
-  assert.ok(zacetek.minY > 0.12 && zacetek.maxY < 0.46, 'y ' + zacetek.minY + '..' + zacetek.maxY);       // visi navzdol (script z 15..45)
+  assert.ok(zacetek.maxZ <= 0.021 && zacetek.minZ >= 0.009, 'z ' + zacetek.minZ + '..' + zacetek.maxZ);   // pred letvijo tečaja (script y -2..-1)
+  assert.ok(zacetek.minY > 0.137 && zacetek.maxY < 0.45, 'y ' + zacetek.minY + '..' + zacetek.maxY);       // visi navzdol (script z 14..44, nad palico pospravljeno 13,7)
   assert.equal(zacetek.uporaba, false);
+  assert.ok(zacetek.minY > 0.1374, 'polička posega v palico');
   assert.equal(zacetek.pospravljena, true);
   await stran.evaluate(() => window.__kuhinja.preklopi('policka'));
   const odprta = await stran.evaluate((ime) => {
@@ -148,7 +160,7 @@ test('polička je privzeto zložena (visi pred čelom), palica pospravljena vidn
     const box = new window.__kuhinja.Box3().setFromObject(p.deli.get(ime));
     return { minY: box.min.y, maxY: box.max.y, maxZ: box.max.z, uporaba: p.deli.get('Palica policke (snemljiva) 12/Body1').visible, pospravljena: p.deli.get('PRIKAZ palica pospravljena na celu/Body1').visible };
   }, POLICKA);
-  assert.ok(odprta.minY > 0.43 && odprta.maxY < 0.46, 'odprta y ' + odprta.minY);
+  assert.ok(odprta.minY > 0.435 && odprta.maxY < 0.46, 'odprta y ' + odprta.minY);
   assert.ok(odprta.maxZ > 0.25, 'odprta z ' + odprta.maxZ);   // sega 30 cm pred celo (script y -31..-1)
   assert.equal(odprta.uporaba, true); assert.equal(odprta.pospravljena, false);
   await stran.evaluate(() => window.__kuhinja.preklopi('policka'));
