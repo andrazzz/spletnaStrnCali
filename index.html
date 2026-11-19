@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="sl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cali pohištvo</title>
+<meta name="description" content="Pohištvo po meri za VW California T7: izvlečna kuhinja, veliki izvlečni predal, škatla za hladilnik in notranji predal. Ogled v 3D.">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+<header class="glava">
+  <div class="ovoj glava-vrstica">
+    <a class="logo" href="#uvod">Cali pohištvo</a>
+    <nav aria-label="Glavna navigacija">
+      <a href="#kuhinja">Kuhinja</a>
+      <a href="#predal">Predal</a>
+      <a href="#ostalo">Ostalo</a>
+      <a href="#fotografije">Fotografije</a>
+      <a href="#kontakt">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section id="uvod" class="sekcija uvod">
+    <div class="ovoj">
+      <h1>Pohištvo po meri za VW California T7</h1>
+      <p class="uvodno">Izvlečna kuhinja, veliki izvlečni predal in drobni dodatki, ki jih ogledate kar v 3D.</p>
+    </div>
+    <div class="ovoj"><div id="hero-prizor" class="hero-prizor" aria-label="Prizor zadnjega dela kombija"></div></div>
+  </section>
+
+  <section id="kuhinja" class="sekcija">
+    <div class="ovoj dva-stolpca">
+      <div class="besedilo">
+        <h2>Izvlečna kuhinja</h2>
+        <p>Kompaktna kuhinjska omarica iz topolove vezane plošče, ki se na vodilih izvleče iz prtljažnika. Skriva dva predala, drsna vrata in zložljivo polico.</p>
+        <p>Predala se odpirata proti notranjosti avta, pult pa je odporen na vodo in vročino.</p>
+        <dl class="mere">
+          <div><dt>Mere</dt><dd>38,4 × 84 × 45 cm</dd></div>
+          <div><dt>Teža</dt><dd>~9,7 kg</dd></div>
+          <div><dt>Delov</dt><dd>35</dd></div>
+        </dl>
+      </div>
+      <div class="pogled-3d" data-model="assets/models/kuhinja.glb" data-opis="3D model izvlečne kuhinje"></div>
+    </div>
+  </section>
+
+  <section id="predal" class="sekcija siva">
+    <div class="ovoj dva-stolpca">
+      <div class="besedilo">
+        <h2>Veliki izvlečni predal</h2>
+        <p>Plitev predal čez celotno širino prtljažnika. Nanj pridejo čevlji, orodje ali kampirna oprema, ki je pri roki brez razmetavanja kombija.</p>
+        <dl class="mere">
+          <div><dt>Mere</dt><dd>110 × 76 × 8 cm</dd></div>
+          <div><dt>Teža</dt><dd>~4,9 kg</dd></div>
+        </dl>
+      </div>
+      <div class="pogled-3d" data-model="assets/models/veliki-predal.glb" data-opis="3D model velikega izvlečnega predala"></div>
+    </div>
+  </section>
+
+  <section id="ostalo" class="sekcija">
+    <div class="ovoj">
+      <h2>Ostali kosi</h2>
+      <div class="kartice">
+        <article class="kartica">
+          <div class="pogled-3d pogled-majhen" data-model="assets/models/hladilnik.glb" data-vrtenje="da" data-opis="3D model škatle za hladilnik"></div>
+          <h3>Škatla za hladilnik</h3>
+          <p>Okvir iz vezane plošče, v katerem hladilna skrinja varno sedi in ostane zračna.</p>
+          <p class="mere-vrstica">67 × 43,7 × 53,5 cm</p>
+        </article>
+        <article class="kartica">
+          <div class="pogled-3d pogled-majhen" data-model="assets/models/notranji-predal.glb" data-vrtenje="da" data-opis="3D model notranjega predala z mizico"></div>
+          <h3>Notranji predal</h3>
+          <p>Predal za plastične zaboje, na katerem se dvigne še mizica za sproti.</p>
+          <p class="mere-vrstica">42 × 63 × 53,5 cm</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="fotografije" class="sekcija siva">
+    <div class="ovoj">
+      <h2>Fotografije</h2>
+      <p class="nadomestek">Fotografije izdelanih kosov bodo dodane kmalu.</p>
+    </div>
+  </section>
+
+  <section id="kontakt" class="sekcija">
+    <div class="ovoj">
+      <h2>Kontakt</h2>
+      <p class="nadomestek">Kontaktni podatki bodo dodani kmalu.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="noga"><div class="ovoj">Cali pohištvo · projekt po meri za VW California T7</div></footer>
+</body>
+</html>

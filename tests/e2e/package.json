@@ -1,0 +1,6 @@
+{
+  "name": "cali-e2e",
+  "private": true,
+  "description": "E2E testi strani (Node node:test + playwright, ki je nameščen globalno)",
+  "scripts": { "test": "node --test --test-timeout=120000 stran.test.js" }
+}
