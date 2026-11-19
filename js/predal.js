@@ -6,6 +6,20 @@ import { IZVLEK, VODILI } from './deli-predal.js';
 
 const MS = 1100;
 
+// Vodili Vevor kot mirujoči škatli (koordinate skripte -> GLB); uporabita ju tudi uvodni prizor.
+export function ustvariVodili() {
+  const sivo = new THREE.MeshStandardMaterial({ color: 0x9a9da3, metalness: 0.7, roughness: 0.45 });
+  return VODILI.map((v) => {
+    const a = izSkripte(v.x0, v.y0, v.z0), b = izSkripte(v.x1, v.y1, v.z1);
+    const velikost = new THREE.Vector3(Math.abs(b.x - a.x), Math.abs(b.y - a.y), Math.abs(b.z - a.z));
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(velikost.x, velikost.y, velikost.z), sivo);
+    mesh.position.copy(a).add(b).multiplyScalar(0.5);
+    mesh.castShadow = mesh.receiveShadow = true;
+    mesh.userData.vodilo = true;
+    return mesh;
+  });
+}
+
 export async function zazeniPredal(vsebnik) {
   const pogled = await ustvariPogled(vsebnik, {
     model: vsebnik.dataset.model,
@@ -20,16 +34,7 @@ export async function zazeniPredal(vsebnik) {
   pogled.koren.add(gibljivo);
   for (const m of pogled.deli.values()) gibljivo.attach(m);
 
-  const sivo = new THREE.MeshStandardMaterial({ color: 0x9a9da3, metalness: 0.7, roughness: 0.45 });
-  for (const v of VODILI) {
-    const a = izSkripte(v.x0, v.y0, v.z0), b = izSkripte(v.x1, v.y1, v.z1);
-    const velikost = new THREE.Vector3(Math.abs(b.x - a.x), Math.abs(b.y - a.y), Math.abs(b.z - a.z));
-    const mesh = new THREE.Mesh(new THREE.BoxGeometry(velikost.x, velikost.y, velikost.z), sivo);
-    mesh.position.copy(a).add(b).multiplyScalar(0.5);
-    mesh.castShadow = mesh.receiveShadow = true;
-    mesh.userData.vodilo = true;
-    pogled.koren.add(mesh);
-  }
+  for (const mesh of ustvariVodili()) pogled.koren.add(mesh);
 
   let izvlecen = false;
   const osvezi = () => { for (const g of gumbi) g.setAttribute('aria-pressed', String(izvlecen)); };

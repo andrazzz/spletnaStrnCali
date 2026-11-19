@@ -34,6 +34,8 @@ a { color: inherit; }
 .uvod { padding-top: 48px; }
 .uvodno { color: var(--bledo); font-size: 1.1rem; max-width: 40em; }
 .hero-prizor { min-height: 0; }
+.gumbi-uvod { margin-top: 12px; }
+@media (min-width: 800px) { .hero-prizor { height: 540px; } }
 
 .dva-stolpca { display: grid; gap: 24px; align-items: center; }
 @media (min-width: 800px) {

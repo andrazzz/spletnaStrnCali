@@ -2,9 +2,19 @@ import { ustvariPogled, lenoNalaganje } from './viewer.js';
 import { zazeniKuhinjo } from './kuhinja.js';
 import { zazeniPredal } from './predal.js';
 import { zazeniOstalo } from './ostalo.js';
+import { zazeniUvod } from './kombi.js';
 
 // Za teste in razhroščevanje: vsebnik -> pogled.
 window.__pogledi = new Map();
+
+const hero = document.querySelector('#uvod .pogled-3d');
+if (hero) {
+  lenoNalaganje(hero, async () => {
+    const uvod = await zazeniUvod(hero);
+    window.__pogledi.set(hero, uvod.pogled);
+    return uvod.pogled;
+  });
+}
 
 for (const vsebnik of document.querySelectorAll('.pogled-3d[data-model]')) {
   lenoNalaganje(vsebnik, async () => {
