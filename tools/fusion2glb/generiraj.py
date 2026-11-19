@@ -24,7 +24,7 @@ import numpy as np  # noqa: E402
 import trimesh  # noqa: E402
 from build123d import Compound, Shape, Solid  # noqa: E402
 
-# sklop -> predpona imena skripte (zadnja verzija po abecedi zmaga)
+# sklop -> predpona imena skripte; najdi_skripto vzame zadnjo po abecedi med ujemajocimi (npr. -v2-... pred -v3-...)
 SKLOPI = {
     'kuhinja': 'kuhinja-v7',
     'veliki-predal': 'veliki-predal-v2',
@@ -68,17 +68,22 @@ def pozeni_skripto(pot: Path, parametri: dict[str, float], doc_ime: str) -> list
 
     pot = Path(pot)
     cm = {n: float(v) / 10.0 for n, v in parametri.items()}
-    app = adsk.core.Application._zacni(doc_ime, cm)
     spec = importlib.util.spec_from_file_location('skripta_' + re.sub(r'\W', '_', pot.stem), pot)
     modul = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modul)
+    # skripte z BF_IME pricakujejo ze obstojec base feature s tem imenom v korenu
+    app = adsk.core.Application._zacni(doc_ime, cm, getattr(modul, 'BF_IME', None))
     modul.main(False)
     root = app.activeProduct.rootComponent
     deli = []
+    # telesa neposredno v korenu (npr. veliki predal: base feature v root) -> komponenta 'root'
+    for b in root.bRepBodies:
+        deli.append(Del(root.name, b.name, b.appearance.name if b.appearance else None,
+                        b.isLightBulbOn, b.shape, b.opacity))
     for o in root.allOccurrences:
         for b in o.component.bRepBodies:
             deli.append(Del(o.component.name, b.name, b.appearance.name if b.appearance else None,
-                            b.isLightBulbOn, b.shape, b.opacity))
+                            b.isLightBulbOn and o.isLightBulbOn, b.shape, b.opacity))
     return deli
 
 

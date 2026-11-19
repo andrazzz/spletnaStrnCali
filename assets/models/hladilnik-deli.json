@@ -1,0 +1,9 @@
+[
+ {"ime": "Dolga stranica L 10/Body1", "videz": "Topol", "bbox_cm": [[-0.0, 0.0, 0.0], [67.0, 1.0, 53.45]]},
+ {"ime": "Dolga stranica D 10/Body1", "videz": "Topol", "bbox_cm": [[-0.0, 42.7, 0.0], [67.0, 43.7, 53.45]]},
+ {"ime": "Kratka stranica zadaj 10/Body1", "videz": "Topol", "bbox_cm": [[0.0, 0.0, 0.0], [1.0, 43.7, 53.45]]},
+ {"ime": "Kratka stranica kompresor 10/Body1", "videz": "Topol", "bbox_cm": [[66.0, 0.0, 0.0], [67.0, 43.7, 53.45]]},
+ {"ime": "Dno okvir 10/Body1", "videz": "Topol", "bbox_cm": [[0.0, 0.0, 0.0], [67.0, 43.7, 1.0]]},
+ {"ime": "Pokrov 10/Body1", "videz": "Topol", "bbox_cm": [[0.0, 0.0, 52.5], [67.0, 43.7, 53.5]]},
+ {"ime": "REF hladilnik/Body1", "videz": "REF hladilnik temno modra", "bbox_cm": [[1.25, 1.1, 1.5], [65.75, 42.6, 51.8]]}
+]

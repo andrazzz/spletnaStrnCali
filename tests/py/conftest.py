@@ -30,6 +30,6 @@ def bbox_cm(deli):
 
 @pytest.fixture(scope='session')
 def kuhinja():
-    from generiraj import nalozi_parametre, pozeni_skripto
+    from generiraj import doc_ime_iz_skripte, nalozi_parametre, pozeni_skripto
     pot = skripta('kuhinja-v7-skripta-cel-model.py')
-    return pozeni_skripto(pot, nalozi_parametre('kuhinja'), 'Californija kuhinja v7')
+    return pozeni_skripto(pot, nalozi_parametre('kuhinja'), doc_ime_iz_skripte(pot))

@@ -148,6 +148,19 @@ class Appearance:
 class Appearances(list):
     """Knjižnica videzov. Skripte iščejo po imenu; vsako ime velja (videz je le oznaka)."""
 
+    # videzi, ki jih avtor drzi v Fusionovi knjiznici (skripte jih iscejo z item(i) po imenu)
+    KNJIZNICA = ('Topol', 'Breza', 'Modra REF')
+
+    def __init__(self):
+        super().__init__(Appearance(n) for n in self.KNJIZNICA)
+
+    @property
+    def count(self):  # Fusionov API; prekrije list.count
+        return len(self)
+
+    def item(self, i):
+        return self[i]
+
     def itemByName(self, name):
         for a in self:
             if a.name == name:
@@ -205,8 +218,9 @@ class BodyCollection:
 
 
 class BaseFeature:
-    def __init__(self, komp):
+    def __init__(self, komp, name=''):
         self._komp = komp
+        self.name = name
 
     def startEdit(self):
         return True
@@ -255,6 +269,7 @@ class Component:
 class Occurrence:
     def __init__(self, komp):
         self.component = komp
+        self.isLightBulbOn = True  # vidnost celotne komponente (Fusion: zarnica v brskalniku)
 
     @property
     def bRepBodies(self):

@@ -1,0 +1,14 @@
+[
+ {"ime": "root/Dno 10mm", "videz": "Topol", "bbox_cm": [[0.0, 0.0, -0.0], [76.0, 110.0, 1.0]]},
+ {"ime": "root/Stranica leva 12mm", "videz": "Topol", "bbox_cm": [[-0.0, 0.0, 0.0], [1.2, 110.0, 8.0]]},
+ {"ime": "root/Stranica desna 12mm", "videz": "Topol", "bbox_cm": [[74.8, 0.0, 0.0], [76.0, 110.0, 8.0]]},
+ {"ime": "root/Precna letev 10mm", "videz": "Topol", "bbox_cm": [[0.0, 44.7, 0.0], [76.0, 45.7, 8.0]]},
+ {"ime": "root/Kos na vodilu spredaj L breza 12", "videz": "Breza", "bbox_cm": [[0.0, 5.275, 0.0], [1.2, 11.225, 4.9]]},
+ {"ime": "root/Kos na vodilu sredina L breza 12", "videz": "Breza", "bbox_cm": [[0.0, 20.21, 0.0], [1.2, 26.16, 4.9]]},
+ {"ime": "root/Kos na vodilu zadaj L breza 12", "videz": "Breza", "bbox_cm": [[0.0, 55.765, 0.0], [1.2, 61.715, 4.9]]},
+ {"ime": "root/Kos na vodilu zadnji L breza 12", "videz": "Breza", "bbox_cm": [[0.0, 87.985, 0.0], [1.2, 93.935, 4.9]]},
+ {"ime": "root/Kos na vodilu spredaj D breza 12", "videz": "Breza", "bbox_cm": [[74.8, 5.275, 0.0], [76.0, 11.225, 4.9]]},
+ {"ime": "root/Kos na vodilu sredina D breza 12", "videz": "Breza", "bbox_cm": [[74.8, 20.21, 0.0], [76.0, 26.16, 4.9]]},
+ {"ime": "root/Kos na vodilu zadaj D breza 12", "videz": "Breza", "bbox_cm": [[74.8, 55.765, 0.0], [76.0, 61.715, 4.9]]},
+ {"ime": "root/Kos na vodilu zadnji D breza 12", "videz": "Breza", "bbox_cm": [[74.8, 87.985, 0.0], [76.0, 93.935, 4.9]]}
+]

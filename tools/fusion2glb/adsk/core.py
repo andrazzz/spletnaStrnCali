@@ -67,6 +67,12 @@ class Matrix3D:
         for i, c in enumerate((v.x, v.y, v.z)):
             self.vrstice[i][3] = c
 
+    def transformBy(self, o):
+        """Kot v Fusionu: self = o * self (najprej self, nato o)."""
+        a, b = o.vrstice, self.vrstice
+        self.vrstice = [[sum(a[i][k] * b[k][j] for k in range(4)) for j in range(4)] for i in range(4)]
+        return True
+
     def setToRotation(self, kot, os, izhodisce):
         """Rotacija za `kot` (rad) okoli osi `os` skozi `izhodisce` (Rodrigues)."""
         n = math.sqrt(os.x ** 2 + os.y ** 2 + os.z ** 2)
@@ -117,10 +123,19 @@ class ValueInput:
         return float(m.group(1)) * _ENOTE_V_CM[m.group(2)]
 
 
+class _Produkti:
+    def __init__(self, design):
+        self._design = design
+
+    def itemByProductType(self, tip):
+        return self._design if tip == 'DesignProductType' else None
+
+
 class Document:
-    def __init__(self, ime, app):
+    def __init__(self, ime, app, design=None):
         self.name = ime
         self._app = app
+        self.products = _Produkti(design)
 
     def activate(self):
         self._app._aktivni = self
@@ -132,7 +147,7 @@ class Application:
     _instanca = None
 
     def __init__(self, doc_ime, design):
-        self.documents = [Document(doc_ime, self)]
+        self.documents = [Document(doc_ime, self, design)]
         self._aktivni = self.documents[0]
         self._design = design
 
@@ -143,9 +158,13 @@ class Application:
         return Application._instanca
 
     @staticmethod
-    def _zacni(doc_ime, parametri_cm):
+    def _zacni(doc_ime, parametri_cm, bf_ime=None):
+        """`bf_ime`: ime base featura, ki ga skripta pricakuje, da ze obstaja v korenu (BF_IME)."""
         from . import fusion
-        Application._instanca = Application(doc_ime, fusion.Design(parametri_cm))
+        design = fusion.Design(parametri_cm)
+        if bf_ime:
+            design.rootComponent.features.baseFeatures.add().name = bf_ime
+        Application._instanca = Application(doc_ime, design)
         return Application._instanca
 
     @property
